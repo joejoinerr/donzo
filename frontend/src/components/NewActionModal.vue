@@ -29,6 +29,7 @@
                         <option value="240">4 hours</option>
                         <option value="360">6 hours</option>
                         <option value="480">8 hours</option>
+                        <option value="485">8 hours 5 mins</option>
                     </select>
                 </div>
                 <div class="flex-1">

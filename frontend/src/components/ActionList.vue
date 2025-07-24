@@ -7,10 +7,16 @@
         <li class="mb-2" v-for="action in actionsList" :key="action.lid">
             <input :checked="action.completed" class="mr-4" type="checkbox" :id="`action-${action.lid}`" name="todo"
                 @click="toggleCompleteAction(action.lid)">
-            <label :for="`action-${action.lid}`" :class="{ 'line-through': action.completed }">{{ action.title }} (time:
-                {{ formatTime(action.time) }}, energy: {{ action.energy || '<none>' }}, due: {{ action.due || '<none>'
-                }}, notes: {{ action.notes ? 'SET' : '<none>' }})</label>
+            <label :for="`action-${action.lid}`" :class="{ 'line-through': action.completed }">
+                <span>{{ action.title }}</span>
+                <span v-if="action.time"> ({{ formatTime(action.time) }})</span>
+                <span v-if="action.energy"> ({{ action.energy.toLowerCase() }})</span>
+                <span v-if="action.due"> ({{ action.due }})</span>
+                <span v-if="action.notes"> (notes: set)</span>
+            </label>
+            <!-- <button class="ml-4 py-1 px-2 bg-gray-200 cursor-pointer">Show notes</button> -->
             <button class="ml-4 py-1 px-2 bg-gray-200 cursor-pointer" @click="deleteAction(action.lid)">Delete</button>
+            <div v-if="action.notes" class="p-3 bg-gray-100">{{ action.notes }}</div>
         </li>
     </ul>
     <!-- <div v-else>No items to show right now</div> -->
@@ -21,16 +27,6 @@ import { useObservable } from '@vueuse/rxjs';
 import { liveQuery } from 'dexie';
 import { db } from '../db'
 
-function formatTime(minutes) {
-    if (!minutes) return "<none>";
-    
-    if (minutes < 60) {
-        return `${minutes}m`;
-    } else {
-        return `${minutes / 60}h`;
-    }
-}
-
 const actionsList = useObservable(
     liveQuery(() => db.actions.filter(action => !action.deleted).toArray())
 )
@@ -39,7 +35,6 @@ const actionsCount = useObservable(
 )
 
 function deleteAction(lid) {
-    // db.actions.delete(lid)
     db.actions.update(lid, { deleted: true })
 }
 
@@ -56,5 +51,16 @@ function clearCompleted() {
 
 function clearDeleted() {
     db.actions.filter(action => action.deleted).delete()
+}
+
+function formatTime(minutes) {
+    if (minutes < 60) {
+        return `${minutes}m`;
+    } else {
+        const hoursText = `${Math.floor(minutes / 60)}h`;
+        const minsRemainder = minutes % 60;
+        if (minsRemainder === 0) return hoursText;
+        return `${hoursText} ${minsRemainder}m`;
+    }
 }
 </script>
