@@ -14,9 +14,11 @@
                 <span v-if="action.due"> ({{ action.due }})</span>
                 <span v-if="action.notes"> (notes: set)</span>
             </label>
-            <!-- <button class="ml-4 py-1 px-2 bg-gray-200 cursor-pointer">Show notes</button> -->
+            <button v-if="action.notes" class="ml-4 py-1 px-2 bg-gray-200 cursor-pointer" @click="toggleNotes(action.lid)">
+                {{ visibleNotes[action.lid] ? 'Hide notes' : 'Show notes' }}
+            </button>
             <button class="ml-4 py-1 px-2 bg-gray-200 cursor-pointer" @click="deleteAction(action.lid)">Delete</button>
-            <div v-if="action.notes" class="p-3 bg-gray-100">{{ action.notes }}</div>
+            <div v-if="action.notes && visibleNotes[action.lid]" class="p-3 bg-gray-100 mt-2">{{ action.notes }}</div>
         </li>
     </ul>
     <!-- <div v-else>No items to show right now</div> -->
@@ -25,7 +27,11 @@
 <script setup>
 import { useObservable } from '@vueuse/rxjs';
 import { liveQuery } from 'dexie';
+import { reactive } from 'vue';
 import { db } from '../db'
+
+// Track which notes are visible
+const visibleNotes = reactive({});
 
 const actionsList = useObservable(
     liveQuery(() => db.actions.filter(action => !action.deleted).toArray())
@@ -62,5 +68,9 @@ function formatTime(minutes) {
         if (minsRemainder === 0) return hoursText;
         return `${hoursText} ${minsRemainder}m`;
     }
+}
+
+function toggleNotes(lid) {
+    visibleNotes[lid] = !visibleNotes[lid];
 }
 </script>
