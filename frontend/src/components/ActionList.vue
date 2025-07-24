@@ -8,7 +8,7 @@
             <input :checked="action.completed" class="mr-4" type="checkbox" :id="`action-${action.lid}`" name="todo"
                 @click="toggleCompleteAction(action.lid)">
             <label :for="`action-${action.lid}`" :class="{ 'line-through': action.completed }">{{ action.title }} (time:
-                {{ action.time || '<none>' }}, energy: {{ action.energy || '<none>' }}, due: {{ action.due || '<none>'
+                {{ formatTime(action.time) }}, energy: {{ action.energy || '<none>' }}, due: {{ action.due || '<none>'
                 }}, notes: {{ action.notes ? 'SET' : '<none>' }})</label>
             <button class="ml-4 py-1 px-2 bg-gray-200 cursor-pointer" @click="deleteAction(action.lid)">Delete</button>
         </li>
@@ -20,6 +20,16 @@
 import { useObservable } from '@vueuse/rxjs';
 import { liveQuery } from 'dexie';
 import { db } from '../db'
+
+function formatTime(minutes) {
+    if (!minutes) return "<none>";
+    
+    if (minutes < 60) {
+        return `${minutes}m`;
+    } else {
+        return `${minutes / 60}h`;
+    }
+}
 
 const actionsList = useObservable(
     liveQuery(() => db.actions.filter(action => !action.deleted).toArray())
