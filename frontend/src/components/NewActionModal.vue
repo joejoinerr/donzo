@@ -11,7 +11,7 @@
                 autocomplete="off" required v-model.trim="newActionData.title">
             <label class="block mb-2" for="action-notes">Notes</label>
             <textarea name="action-notes" id="action-notes" class="block mb-4 w-full border-1 border-gray-300 px-4 py-3"
-                placeholder="Notes about the action" rows="3" v-model.trim="newActionData.notes"></textarea>
+                placeholder="Need to scrub until spotless" rows="3" v-model.trim="newActionData.notes"></textarea>
             <div class="flex gap-8">
                 <div class="flex-1">
                     <label class="block mb-2" for="action-time">Time</label>
@@ -29,7 +29,6 @@
                         <option value="240">4 hours</option>
                         <option value="360">6 hours</option>
                         <option value="480">8 hours</option>
-                        <option value="485">8 hours 5 mins</option>
                     </select>
                 </div>
                 <div class="flex-1">
