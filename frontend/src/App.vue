@@ -1,9 +1,22 @@
+<template>
+    <div><button @click="toggleNewAction" class="py-2 px-3 mb-8 bg-gray-200 cursor-pointer mr-2">Toggle new
+            action</button></div>
+    <NewActionModal v-if="isNewActionShowing" @close="hideNewAction" />
+    <ActionList />
+</template>
+
 <script setup>
 import ActionList from './components/ActionList.vue';
 import NewActionModal from './components/NewActionModal.vue';
-</script>
+import { ref } from 'vue';
 
-<template>
-    <NewActionModal />
-    <ActionList/>
-</template>
+let isNewActionShowing = ref(false)
+
+function toggleNewAction() {
+    isNewActionShowing.value = !isNewActionShowing.value
+}
+
+function hideNewAction() {
+    isNewActionShowing.value = false
+}
+</script>
