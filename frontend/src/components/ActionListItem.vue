@@ -1,6 +1,7 @@
 <template>
     <li class="block flex items-start bg-white mb-[2px] p-3">
-        <input :checked="action.completed" class="mr-4 mt-2" type="checkbox" :id="`action-${action.lid}`" name="todo"
+        <input :checked="action.completed" class="mr-4 mt-2" :class="{ 'accent-red-500': isDueOrOverdue }" 
+            type="checkbox" :id="`action-${action.lid}`" name="todo"
             @click="$emit('toggle-complete', action.lid)">
         <div class="flex-1">
             <div class="flex items-center justify-between">
@@ -35,13 +36,25 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 const props = defineProps({
     action: {
         type: Object,
         required: true
     }
+});
+
+const isDueOrOverdue = computed(() => {
+    if (!props.action.due) return false;
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set to start of day
+    
+    const dueDate = new Date(props.action.due);
+    dueDate.setHours(0, 0, 0, 0); // Set to start of day
+    
+    return dueDate <= today;
 });
 
 defineEmits(['toggle-complete', 'delete']);
