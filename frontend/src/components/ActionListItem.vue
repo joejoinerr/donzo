@@ -1,6 +1,7 @@
 <template>
     <li class="block flex items-start bg-white mb-[2px] p-3">
-        <input :checked="action.completed" class="mr-4 mt-2" :class="{ 'accent-red-500': isDueOrOverdue }" 
+        <input :checked="action.completed" class="mr-4 mt-2 checkbox" 
+            :class="{ 'due-checkbox': isDueOrOverdue }" 
             type="checkbox" :id="`action-${action.lid}`" name="todo"
             @click="$emit('toggle-complete', action.lid)">
         <div class="flex-1">
@@ -76,3 +77,14 @@ function formatTime(minutes) {
     }
 }
 </script>
+
+<style scoped>
+.due-checkbox {
+    border: 2px solid red;
+    outline: 1px solid red;
+}
+
+.due-checkbox:checked {
+    background-color: red;
+}
+</style>
