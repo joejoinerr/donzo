@@ -1,7 +1,7 @@
 <template>
     <li class="block flex items-start bg-white mb-[2px] p-3">
-        <input :checked="action.completed" class="mr-4 mt-2" type="checkbox" :id="`action-${action.lid}`"
-            name="todo" @click="$emit('toggle-complete', action.lid)">
+        <input :checked="action.completed" class="mr-4 mt-2" type="checkbox" :id="`action-${action.lid}`" name="todo"
+            @click="$emit('toggle-complete', action.lid)">
         <div class="flex-1">
             <div class="flex items-center justify-between">
                 <div>
