@@ -1,9 +1,9 @@
 <template>
     <li class="block flex items-start bg-white mb-[2px] p-3">
-        <input :checked="action.completed" class="mr-4 mt-2 checkbox" 
-            :class="{ 'due-checkbox': isDueOrOverdue }" 
-            type="checkbox" :id="`action-${action.lid}`" name="todo"
-            @click="$emit('toggle-complete', action.lid)">
+        <input :checked="action.completed"
+            class="relative mr-4 mt-2 appearance-none border-1 w-[18px] h-[18px] rounded-sm cursor-pointer checked:bg-gray-500 checked:border-gray-500 before:content-['✔'] before:leading-none before:absolute before:left-[2px] before:text-white before:text-sm before:invisible checked:before:visible"
+            :class="{ 'bg-red-400': isDueOrOverdue, 'border-red-600': isDueOrOverdue, 'border-gray-400': !isDueOrOverdue }"
+            type="checkbox" :id="`action-${action.lid}`" name="todo" @click="toggleCompleteAction(action.lid)">
         <div class="flex-1">
             <div class="flex items-center justify-between">
                 <div>
@@ -26,7 +26,7 @@
                         {{ action.due }}
                     </div>
                     <button class="ml-2 py-1 px-2 bg-gray-200 cursor-pointer"
-                        @click="$emit('delete', action.lid)">Delete</button>
+                        @click="deleteAction(action.lid)">Delete</button>
                 </div>
             </div>
             <div v-if="action.notes && isNotesVisible" class="px-3 py-1 border-l-2 border-gray-400 mt-2">
@@ -38,6 +38,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import { db } from '@/db';
 
 const props = defineProps({
     action: {
@@ -48,22 +49,31 @@ const props = defineProps({
 
 const isDueOrOverdue = computed(() => {
     if (!props.action.due) return false;
-    
+
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Set to start of day
-    
+
     const dueDate = new Date(props.action.due);
     dueDate.setHours(0, 0, 0, 0); // Set to start of day
-    
+
     return dueDate <= today;
 });
-
-defineEmits(['toggle-complete', 'delete']);
 
 const isNotesVisible = ref(false);
 
 function toggleNotes() {
     isNotesVisible.value = !isNotesVisible.value;
+}
+
+function toggleCompleteAction(lid) {
+    db.transaction('rw', [db.actions], async () => {
+        const action = await db.actions.get(lid)
+        db.actions.update(lid, { completed: !action.completed })
+    });
+}
+
+function deleteAction(lid) {
+    db.actions.update(lid, { deleted: true })
 }
 
 function formatTime(minutes) {
@@ -77,14 +87,3 @@ function formatTime(minutes) {
     }
 }
 </script>
-
-<style scoped>
-.due-checkbox {
-    border: 2px solid red;
-    outline: 1px solid red;
-}
-
-.due-checkbox:checked {
-    background-color: red;
-}
-</style>

@@ -47,8 +47,7 @@
                         <label class="block mb-2" for="action-due">Due date</label>
                         <input name="action-due" id="action-due"
                             class="block mb-6 border-1 border-gray-300 px-4 py-3 leading-none w-full" type="date"
-                            :min="new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0]"
-                            v-model="newActionData.due">
+                            :min="new Date(Date.now()).toISOString().split('T')[0]" v-model="newActionData.due">
                     </div>
                 </div>
                 <input type="submit"

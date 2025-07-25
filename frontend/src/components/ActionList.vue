@@ -4,13 +4,8 @@
     <div>Actions: {{ actionsCount }}</div>
 
     <ol v-if="actionsCount > 0">
-        <ActionListItem
-            v-for="action in actionsList"
-            :key="action.lid"
-            :action="action"
-            @toggle-complete="toggleCompleteAction"
-            @delete="deleteAction"
-        />
+        <ActionListItem v-for="action in actionsList" :key="action.lid" :action="action"
+            @toggle-complete="toggleCompleteAction" @delete="deleteAction" />
     </ol>
     <div v-else class="italic">No items to show right now</div>
 </template>
@@ -27,17 +22,6 @@ const actionsList = useObservable(
 const actionsCount = useObservable(
     liveQuery(() => db.actions.filter(action => !action.deleted).count())
 )
-
-function deleteAction(lid) {
-    db.actions.update(lid, { deleted: true })
-}
-
-function toggleCompleteAction(lid) {
-    db.transaction('rw', [db.actions], async () => {
-        const action = await db.actions.get(lid)
-        db.actions.update(lid, { completed: !action.completed })
-    });
-}
 
 function clearCompleted() {
     db.actions.filter(action => action.completed).modify({ deleted: true })
