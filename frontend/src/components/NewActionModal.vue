@@ -1,6 +1,6 @@
 <template>
     <div class="fixed top-0 left-0 right-0 bottom-0 bg-black/40 flex items-center justify-center z-1">
-        <div class="mb-6 bg-white w-[750px]">
+        <div class="bg-white w-[750px]">
             <header class="flex justify-between bg-blue-600 p-4">
                 <div class="text-white font-bold">New action</div>
                 <button @click="emit('close')" class="block bg-white px-2 cursor-pointer">Close</button>

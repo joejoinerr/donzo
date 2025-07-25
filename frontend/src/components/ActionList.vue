@@ -3,25 +3,40 @@
     <button class="py-2 px-3 mb-8 bg-red-200 cursor-pointer" @click="clearDeleted">Clear deleted (debug)</button>
     <div>Actions: {{ actionsCount }}</div>
 
-    <ul>
-        <li class="mb-2" v-for="action in actionsList" :key="action.lid">
-            <input :checked="action.completed" class="mr-4" type="checkbox" :id="`action-${action.lid}`" name="todo"
-                @click="toggleCompleteAction(action.lid)">
-            <label :for="`action-${action.lid}`" :class="{ 'line-through': action.completed }">
-                <span>{{ action.title }}</span>
-                <span v-if="action.time"> ({{ formatTime(action.time) }})</span>
-                <span v-if="action.energy"> ({{ action.energy.toLowerCase() }})</span>
-                <span v-if="action.due"> ({{ action.due }})</span>
-                <span v-if="action.notes"> (notes: set)</span>
-            </label>
-            <button v-if="action.notes" class="ml-4 py-1 px-2 bg-gray-200 cursor-pointer" @click="toggleNotes(action.lid)">
-                {{ visibleNotes[action.lid] ? 'Hide notes' : 'Show notes' }}
-            </button>
-            <button class="ml-4 py-1 px-2 bg-gray-200 cursor-pointer" @click="deleteAction(action.lid)">Delete</button>
-            <div v-if="action.notes && visibleNotes[action.lid]" class="p-3 bg-gray-100 mt-2">{{ action.notes }}</div>
+    <ol v-if="actionsCount > 0">
+        <li class="block flex items-start bg-white mb-[2px] p-3" v-for="action in actionsList" :key="action.lid">
+            <input :checked="action.completed" class="mr-4 mt-2" type="checkbox" :id="`action-${action.lid}`"
+                name="todo" @click="toggleCompleteAction(action.lid)">
+            <div class="flex-1">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <label :for="`action-${action.lid}`" :class="{ 'line-through': action.completed }">
+                            <span>{{ action.title }}</span>
+                        </label>
+                        <button v-if="action.notes" class="ml-4 py-1 px-2 bg-gray-200 cursor-pointer font-bold"
+                            @click="toggleNotes(action.lid)">
+                            {{ visibleNotes[action.lid] ? '-' : '+' }}
+                        </button>
+                    </div>
+                    <div class="flex items-center gap-x-3">
+                        <div class="rounded-full bg-gray-200 px-2 text-sm" v-if="action.time">{{ formatTime(action.time)
+                        }}
+                        </div>
+                        <div class="rounded-full bg-gray-200 px-2 text-sm" v-if="action.energy">{{
+                            action.energy.toLowerCase()
+                            }}</div>
+                        <div class="rounded-full bg-gray-200 px-2 text-sm" v-if="action.due">{{ action.due }}</div>
+                        <button class="ml-2 py-1 px-2 bg-gray-200 cursor-pointer"
+                            @click="deleteAction(action.lid)">Delete</button>
+                    </div>
+                </div>
+                <div v-if="action.notes && visibleNotes[action.lid]" class="px-3 py-1 border-l-2 border-gray-400 mt-2">
+                    {{ action.notes }}
+                </div>
+            </div>
         </li>
-    </ul>
-    <!-- <div v-else>No items to show right now</div> -->
+    </ol>
+    <div v-else class="italic">No items to show right now</div>
 </template>
 
 <script setup>
