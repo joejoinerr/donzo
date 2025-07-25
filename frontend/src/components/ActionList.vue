@@ -20,11 +20,11 @@
                     </div>
                     <div class="flex items-center gap-x-3">
                         <div class="rounded-full bg-gray-200 px-2 text-sm" v-if="action.time">{{ formatTime(action.time)
-                        }}
+                            }}
                         </div>
                         <div class="rounded-full bg-gray-200 px-2 text-sm" v-if="action.energy">{{
                             action.energy.toLowerCase()
-                            }}</div>
+                        }}</div>
                         <div class="rounded-full bg-gray-200 px-2 text-sm" v-if="action.due">{{ action.due }}</div>
                         <button class="ml-2 py-1 px-2 bg-gray-200 cursor-pointer"
                             @click="deleteAction(action.lid)">Delete</button>
