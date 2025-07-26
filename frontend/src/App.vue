@@ -1,7 +1,7 @@
 <template>
-    <NewActionModal v-if="isNewActionShowing" @close="hideNewAction" />
+    <NewActionModal v-if="modalStore.isOpen" />
     <header class="bg-blue-600 p-4">
-        <button @click="toggleNewAction" class="py-2 px-3 bg-white cursor-pointer mr-2">New action +</button>
+        <button @click="modalStore.openNew()" class="py-2 px-3 bg-white cursor-pointer mr-2">New action +</button>
     </header>
     <main class="flex items-stretch h-[100vh]">
         <nav class="bg-white py-4 w-[220px]">
@@ -25,15 +25,7 @@
 
 <script setup>
 import NewActionModal from '@/components/NewActionModal.vue';
-import { ref } from 'vue';
+import { useModalStore } from '@/stores/modalStore';
 
-let isNewActionShowing = ref(false)
-
-function toggleNewAction() {
-    isNewActionShowing.value = !isNewActionShowing.value
-}
-
-function hideNewAction() {
-    isNewActionShowing.value = false
-}
+const modalStore = useModalStore();
 </script>

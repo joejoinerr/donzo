@@ -2,8 +2,8 @@
     <div class="fixed top-0 left-0 right-0 bottom-0 bg-black/40 flex items-center justify-center z-1">
         <div class="bg-white w-[750px]">
             <header class="flex justify-between bg-blue-600 p-4">
-                <div class="text-white font-bold">New action</div>
-                <button @click="emit('close')" class="block bg-white px-2 cursor-pointer">Close</button>
+                <div class="text-white font-bold">{{ modalStore.editMode ? 'Edit action' : 'New action' }}</div>
+                <button @click="modalStore.close()" class="block bg-white px-2 cursor-pointer">Close</button>
             </header>
             <form @submit.prevent="addAction" class="p-5">
                 <label class="block mb-2" for="action-title">Title</label>
@@ -75,19 +75,20 @@
                 </div>
                 <input type="submit"
                     class="py-2 px-6 border-1 border-blue-600 text-blue-600 cursor-pointer hover:bg-blue-600 hover:text-white"
-                    value="Submit">
+                    :value="modalStore.editMode ? 'Update' : 'Submit'">
                 <input type="button" class="py-2 px-6 border-1 border-gray-300 text-gray-600 cursor-pointer ml-4"
-                    value="Cancel" @click="emit('close')">
+                    value="Cancel" @click="modalStore.close()">
             </form>
         </div>
     </div>
 </template>
 
 <script setup>
-import { reactive } from 'vue';
+import { reactive, watch } from 'vue';
 import { db } from '@/db';
+import { useModalStore } from '@/stores/modalStore';
 
-const emit = defineEmits(['close'])
+const modalStore = useModalStore();
 const newActionDefaults = {
     title: '',
     time: '',
@@ -99,6 +100,25 @@ const newActionDefaults = {
 }
 const newActionData = reactive({ ...newActionDefaults })
 
+// Initialize form when modal opens for editing
+watch(() => modalStore.currentAction, (currentAction) => {
+    if (currentAction) {
+        // Fill form with existing action data
+        Object.assign(newActionData, {
+            title: currentAction.title || '',
+            time: currentAction.time || '',
+            energy: currentAction.energy || '',
+            notes: currentAction.notes || '',
+            due: currentAction.due || '',
+            state: currentAction.state || 'inbox',
+            waitingFor: currentAction.waitingFor || ''
+        })
+    } else {
+        // Reset form for new action
+        clearForm()
+    }
+}, { immediate: true })
+
 function clearForm() {
     Object.assign(newActionData, newActionDefaults)
 }
@@ -106,18 +126,27 @@ function clearForm() {
 function addAction() {
     // Title is required
     if (!newActionData.title) return;
+    
     const action = {
         ...newActionData,
-        completed: false,
+        completed: modalStore.editMode ? modalStore.currentAction.completed : false,
         deleted: false
     }
     action.time = action.time || null
     action.energy = action.energy || null
     action.due = action.due || null
     action.waitingFor = action.waitingFor ? (action.state === 'waiting' && action.waitingFor) : null
-    db.actions.add(action)
-    // Reset the form
+    
+    if (modalStore.editMode && modalStore.currentAction) {
+        // Update existing action
+        db.actions.update(modalStore.currentAction.lid, action)
+    } else {
+        // Add new action
+        db.actions.add(action)
+    }
+    
+    // Reset the form and close the modal
     clearForm()
-    emit('close')
+    modalStore.close()
 };
 </script>

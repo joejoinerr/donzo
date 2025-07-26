@@ -12,7 +12,7 @@
                         {{ action.waitingFor || 'Someone' }}
                     </div>
                     <label :for="`action-${action.lid}`" :class="{ 'line-through': action.completed }">
-                        <button class="cursor-pointer hover:underline">{{ action.title }}</button>
+                        <button class="cursor-pointer hover:underline" @click.stop.prevent="editAction">{{ action.title }}</button>
                     </label>
                     <button v-if="action.notes"
                         class="leading-none ml-4 bg-gray-200 cursor-pointer font-bold w-[20px] h-[20px] text-center"
@@ -44,6 +44,9 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { db } from '@/db';
+import { useModalStore } from '@/stores/modalStore';
+
+const modalStore = useModalStore();
 
 const props = defineProps({
     action: {
@@ -79,6 +82,10 @@ function toggleCompleteAction(lid) {
 
 function deleteAction(lid) {
     db.actions.update(lid, { deleted: true })
+}
+
+function editAction() {
+    modalStore.openEdit(props.action);
 }
 
 function formatTime(minutes) {
