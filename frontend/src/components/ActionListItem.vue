@@ -6,11 +6,16 @@
             type="checkbox" :id="`action-${action.lid}`" name="todo" @click="toggleCompleteAction(action.lid)">
         <div class="flex-1">
             <div class="flex items-center justify-between">
-                <div>
+                <div class="flex items-center">
+                    <div v-if="action.state === 'waiting'"
+                        class="inline-block text-sm p-1 bg-gray-200 leading-none mr-3">
+                        {{ action.waitingFor || 'Someone' }}
+                    </div>
                     <label :for="`action-${action.lid}`" :class="{ 'line-through': action.completed }">
-                        <span>{{ action.title }}</span>
+                        <button class="cursor-pointer hover:underline">{{ action.title }}</button>
                     </label>
-                    <button v-if="action.notes" class="ml-4 py-1 px-2 bg-gray-200 cursor-pointer font-bold"
+                    <button v-if="action.notes"
+                        class="leading-none ml-4 bg-gray-200 cursor-pointer font-bold w-[20px] h-[20px] text-center"
                         @click="toggleNotes">
                         {{ isNotesVisible ? '-' : '+' }}
                     </button>

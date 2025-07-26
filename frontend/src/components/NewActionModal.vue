@@ -10,6 +10,29 @@
                 <input autofocus type="text" name="action-title" id="action-title"
                     class="block mb-4 w-full border-1 border-gray-300 px-4 py-3" placeholder="Do the dishes"
                     autocomplete="off" required v-model.trim="newActionData.title">
+                <div class="flex gap-8">
+                    <div>
+                        <label for="action-state" class="block mb-2">State</label>
+                        <select name="action-state" id="action-state"
+                            class="block mb-4 border-1 border-gray-300 px-4 py-3" v-model="newActionData.state">
+                            <option value="inbox">Inbox</option>
+                            <option value="next">Next</option>
+                            <option value="waiting">Waiting</option>
+                            <option value="someday">Someday</option>
+                            <option value="scheduled">Scheduled</option>
+                        </select>
+                    </div>
+                    <div v-if="newActionData.state === 'waiting'">
+                        <label for="action-waiting-for" class="block mb-2">Waiting
+                            for</label>
+                        <select name="action-waiting-for" id="action-waiting-for"
+                            class="block mb-4 border-1 border-gray-300 px-4 py-3" v-model="newActionData.waitingFor">
+                            <option value="">Someone</option>
+                            <option value="something">Nat Siriviriyakul</option>
+                            <option value="somewhere">Mother</option>
+                        </select>
+                    </div>
+                </div>
                 <label class="block mb-2" for="action-notes">Notes</label>
                 <textarea name="action-notes" id="action-notes"
                     class="block mb-4 w-full border-1 border-gray-300 px-4 py-3"
@@ -53,6 +76,8 @@
                 <input type="submit"
                     class="py-2 px-6 border-1 border-blue-600 text-blue-600 cursor-pointer hover:bg-blue-600 hover:text-white"
                     value="Submit">
+                <input type="button" class="py-2 px-6 border-1 border-gray-300 text-gray-600 cursor-pointer ml-4"
+                    value="Cancel" @click="emit('close')">
             </form>
         </div>
     </div>
@@ -68,7 +93,9 @@ const newActionDefaults = {
     time: '',
     energy: '',
     notes: '',
-    due: ''
+    due: '',
+    state: 'inbox',
+    waitingFor: ''
 }
 const newActionData = reactive({ ...newActionDefaults })
 
@@ -87,6 +114,7 @@ function addAction() {
     action.time = action.time || null
     action.energy = action.energy || null
     action.due = action.due || null
+    action.waitingFor = action.waitingFor ? (action.state === 'waiting' && action.waitingFor) : null
     db.actions.add(action)
     // Reset the form
     clearForm()
