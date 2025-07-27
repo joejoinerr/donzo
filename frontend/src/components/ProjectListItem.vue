@@ -1,17 +1,14 @@
 <template>
     <li class="block flex items-start bg-white mb-[2px] p-3">
-        <input :checked="project.completed"
-            class="relative mr-4 mt-2 appearance-none border-1 w-[18px] h-[18px] rounded-sm cursor-pointer checked:bg-gray-500 checked:border-gray-500 before:content-['✔'] before:leading-none before:absolute before:left-[2px] before:text-white before:text-sm before:invisible checked:before:visible"
-            :class="{ 'bg-red-400': isDueOrOverdue, 'border-red-600': isDueOrOverdue, 'border-gray-400': !isDueOrOverdue }"
-            type="checkbox" :id="`project-${project.lid}`" name="todo" @click="toggleCompleteProject(project.lid)">
+        <ItemCheckbox :item="project" :item-type="'project'" @click="toggleCompleteProject(project.lid)" />
         <div class="flex-1">
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
                     <label :for="`project-${project.lid}`">
-                        <button 
+                        <button
                             class="mr-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full cursor-pointer hover:bg-blue-200"
                             @click.stop.prevent="showProjectActions">
-                            {{ actionCount }}
+                            {{ actionCount }} Actions
                         </button>
                         <button class="cursor-pointer hover:underline" @click.stop.prevent="editProject">{{
                             project.title
@@ -43,6 +40,8 @@ import { ref, computed } from 'vue';
 import { db } from '@/db';
 import { useProjectModalStore } from '@/stores/modalStore';
 import { liveQuery } from 'dexie';
+import { useObservable } from '@vueuse/rxjs';
+import ItemCheckbox from '@/components/ItemCheckbox.vue';
 
 const modalStore = useProjectModalStore();
 
@@ -53,35 +52,14 @@ const props = defineProps({
     }
 });
 
-const isDueOrOverdue = computed(() => {
-    if (!props.project.due) return false;
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Set to start of day
-
-    const dueDate = new Date(props.project.due);
-    dueDate.setHours(0, 0, 0, 0); // Set to start of day
-
-    return dueDate <= today;
-});
-
-const actionCount = computed(() => {
-    // This assumes actions have a project_id field linking to the project
-    // You'll need to adjust the field name based on your actual schema
-    return db.actions.where('project_id').equals(props.project.lid).count();
-});
+const actionCount = useObservable(
+    liveQuery(() => db.actions.where('projectLid').equals(props.project.lid).count())
+);
 
 const isNotesVisible = ref(false);
 
 function showHideNotes() {
     isNotesVisible.value = !isNotesVisible.value;
-}
-
-function toggleCompleteProject(lid) {
-    db.transaction('rw', [db.projects], async () => {
-        const project = await db.projects.get(lid)
-        db.projects.update(lid, { completed: !project.completed })
-    });
 }
 
 function deleteProject(lid) {
@@ -96,5 +74,19 @@ function showProjectActions() {
     // Handle what happens when the action count button is clicked
     // Maybe navigate to a filtered view of actions for this project
     console.log(`Show actions for project ${props.project.lid}`);
+}
+
+function toggleCompleteProject(lid) {
+    db.transaction('rw', [db.projects], async () => {
+        const project = await db.projects.get(lid)
+        const newCompletedState = !project.completed;
+        db.projects.update(lid, { completed: newCompletedState });
+
+        // Mark all actions in this project as completed but if project is completed,
+        // but we don't want to uncomplete them if it's undone.
+        if (newCompletedState) {
+            db.actions.where('projectLid').equals(lid).modify({ completed: !project.completed });
+        }
+    });
 }
 </script>

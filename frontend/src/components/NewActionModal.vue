@@ -22,6 +22,14 @@
                             <option value="scheduled">Scheduled</option>
                         </select>
                     </div>
+                    <div>
+                        <label for="action-project" class="block mb-2">Project</label>
+                        <select name="action-project" id="action-project"
+                            class="block mb-4 border-1 border-gray-300 px-4 py-3" v-model="newActionData.projectLid">
+                            <option value="">Standalone (no project)</option>
+                            <option v-for="project in projectsList" :value="project.lid">{{ project.title }}</option>
+                        </select>
+                    </div>
                     <div v-if="newActionData.state === 'waiting'">
                         <label for="action-waiting-for" class="block mb-2">Waiting
                             for</label>
@@ -87,7 +95,12 @@
 import { reactive, watch } from 'vue';
 import { db } from '@/db';
 import { useActionModalStore } from '@/stores/modalStore';
+import { useObservable } from '@vueuse/rxjs';
+import { liveQuery } from 'dexie';
 
+const projectsList = useObservable(
+    liveQuery(() => db.projects.filter(project => !project.deleted).toArray())
+);
 const modalStore = useActionModalStore();
 const newActionDefaults = {
     title: '',
@@ -96,7 +109,8 @@ const newActionDefaults = {
     notes: '',
     due: '',
     state: 'inbox',
-    waitingFor: ''
+    waitingFor: '',
+    projectLid: ''
 }
 const newActionData = reactive({ ...newActionDefaults })
 
@@ -111,7 +125,8 @@ watch(() => modalStore.currentAction, (currentAction) => {
             notes: currentAction.notes || '',
             due: currentAction.due || '',
             state: currentAction.state || 'inbox',
-            waitingFor: currentAction.waitingFor || ''
+            waitingFor: currentAction.waitingFor || '',
+            projectLid: currentAction.projectLid || ''
         })
     } else {
         // Reset form for new action
@@ -136,6 +151,10 @@ function addAction() {
     action.energy = action.energy || null
     action.due = action.due || null
     action.waitingFor = action.waitingFor ? (action.state === 'waiting' && action.waitingFor) : null
+    action.projectLid = action.projectLid || null
+    if (action.projectLid && action.state === 'inbox') {
+        action.state = 'next'; // If a project is selected, set state to 'next' if it was 'inbox'   
+    }
 
     if (modalStore.editMode && modalStore.currentAction) {
         // Update existing action

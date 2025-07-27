@@ -20,6 +20,7 @@
                         @click="showHideNotes">
                         {{ isNotesVisible ? '-' : '+' }}
                     </button>
+                    <a v-if="action.projectLid" href="#" class="ml-4">{{ projectTitle }}</a>
                 </div>
                 <div class="flex items-center gap-x-3">
                     <div class="rounded-full bg-gray-200 px-2 text-sm" v-if="action.time">
@@ -54,6 +55,13 @@ const props = defineProps({
         type: Object,
         required: true
     }
+});
+
+const projectTitle = computed(async () => {
+    // if (!props.action.projectLid) return;
+    const project = await db.projects.get(props.action.projectLid);
+    console.log('Project:', project);
+    return project ? project.title : 'Unknown Project';
 });
 
 const isDueOrOverdue = computed(() => {
