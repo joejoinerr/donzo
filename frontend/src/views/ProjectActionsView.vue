@@ -23,22 +23,58 @@ import { db } from '../db';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
-const collection = db.actions.filter(action => !action.deleted && action.projectLid === Number(route.params.projectLid));
-const nextActionsCollection = collection.filter(action => action.state === 'next');
-const somedayActionsCollection = collection.filter(action => action.state === 'someday');
+const projectLid = Number(route.params.projectLid);
+
+// Use independent liveQuery calls instead of chained filters
 const nextActionsList = useObservable(
-    liveQuery(() => nextActionsCollection.toArray())
+    liveQuery(() =>
+        db.actions
+            .filter(action =>
+                !action.deleted &&
+                action.projectLid === projectLid &&
+                action.state === 'next'
+            )
+            .toArray()
+    )
 )
+
 const nextActionsCount = useObservable(
-    liveQuery(() => nextActionsCollection.count())
+    liveQuery(() =>
+        db.actions
+            .filter(action =>
+                !action.deleted &&
+                action.projectLid === projectLid &&
+                action.state === 'next'
+            )
+            .count()
+    )
 )
+
 const somedayActionsList = useObservable(
-    liveQuery(() => somedayActionsCollection.toArray())
+    liveQuery(() =>
+        db.actions
+            .filter(action =>
+                !action.deleted &&
+                action.projectLid === projectLid &&
+                action.state === 'someday'
+            )
+            .toArray()
+    )
 )
+
 const somedayActionsCount = useObservable(
-    liveQuery(() => somedayActionsCollection.count())
+    liveQuery(() =>
+        db.actions
+            .filter(action =>
+                !action.deleted &&
+                action.projectLid === projectLid &&
+                action.state === 'someday'
+            )
+            .count()
+    )
 )
+
 const project = useObservable(
-    liveQuery(() => db.projects.get(Number(route.params.projectLid)))
+    liveQuery(() => db.projects.get(projectLid))
 )
 </script>
