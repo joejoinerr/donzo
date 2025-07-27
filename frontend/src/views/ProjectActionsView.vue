@@ -40,9 +40,9 @@ const actionsList = useObservable(
     )
 )
 
-const nextActionsList = computed(() => actionsList ? actionsList.value.filter(a => !a.completed && a.state === 'next') : []);
-const somedayActionsList = computed(() => actionsList ? actionsList.value.filter(a => !a.completed && a.state === 'someday') : []);
-const completedActionsList = computed(() => actionsList ? actionsList.value.filter(a => a.completed) : []);
+const nextActionsList = computed(() => actionsList.value ? actionsList.value.filter(a => !a.completed && a.state === 'next') : []);
+const somedayActionsList = computed(() => actionsList.value ? actionsList.value.filter(a => !a.completed && a.state === 'someday') : []);
+const completedActionsList = computed(() => actionsList.value ? actionsList.value.filter(a => a.completed) : []);
 
 const project = useObservable(
     liveQuery(() => db.projects.get(projectLid))
