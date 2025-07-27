@@ -1,4 +1,5 @@
 <template>
+    <h1 class="text-2xl mb-8 font-bold text-gray-600">Next</h1>
     <ol v-if="nextActionsCount > 0">
         <ActionListItem v-for="action in nextActionsList" :key="action.lid" :action="action" />
     </ol>

@@ -1,4 +1,5 @@
 <template>
+    <h1 class="text-2xl mb-8 font-bold text-gray-600">Waiting</h1>
     <ol v-if="waitingActionsCount > 0">
         <ActionListItem v-for="action in waitingActionsList" :key="action.lid" :action="action" />
     </ol>

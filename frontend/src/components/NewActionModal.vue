@@ -28,8 +28,8 @@
                         <select name="action-waiting-for" id="action-waiting-for"
                             class="block mb-4 border-1 border-gray-300 px-4 py-3" v-model="newActionData.waitingFor">
                             <option value="">Someone</option>
-                            <option value="something">Nat Siriviriyakul</option>
-                            <option value="somewhere">Mother</option>
+                            <option value="Nat Siriviriyakul">Nat Siriviriyakul</option>
+                            <option value="Mother">Mother</option>
                         </select>
                     </div>
                 </div>
@@ -86,9 +86,9 @@
 <script setup>
 import { reactive, watch } from 'vue';
 import { db } from '@/db';
-import { useModalStore } from '@/stores/modalStore';
+import { useActionModalStore } from '@/stores/modalStore';
 
-const modalStore = useModalStore();
+const modalStore = useActionModalStore();
 const newActionDefaults = {
     title: '',
     time: '',
@@ -126,7 +126,7 @@ function clearForm() {
 function addAction() {
     // Title is required
     if (!newActionData.title) return;
-    
+
     const action = {
         ...newActionData,
         completed: modalStore.editMode ? modalStore.currentAction.completed : false,
@@ -136,7 +136,7 @@ function addAction() {
     action.energy = action.energy || null
     action.due = action.due || null
     action.waitingFor = action.waitingFor ? (action.state === 'waiting' && action.waitingFor) : null
-    
+
     if (modalStore.editMode && modalStore.currentAction) {
         // Update existing action
         db.actions.update(modalStore.currentAction.lid, action)
@@ -144,7 +144,7 @@ function addAction() {
         // Add new action
         db.actions.add(action)
     }
-    
+
     // Reset the form and close the modal
     clearForm()
     modalStore.close()

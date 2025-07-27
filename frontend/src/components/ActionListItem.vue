@@ -13,7 +13,7 @@
                     </div>
                     <label :for="`action-${action.lid}`" :class="{ 'line-through': action.completed }">
                         <button class="cursor-pointer hover:underline" @click.stop.prevent="editAction">{{ action.title
-                            }}</button>
+                        }}</button>
                     </label>
                     <button v-if="action.notes"
                         class="leading-none ml-4 bg-gray-200 cursor-pointer font-bold w-[20px] h-[20px] text-center"
@@ -45,9 +45,9 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { db } from '@/db';
-import { useModalStore } from '@/stores/modalStore';
+import { useActionModalStore } from '@/stores/modalStore';
 
-const modalStore = useModalStore();
+const modalStore = useActionModalStore();
 
 const props = defineProps({
     action: {

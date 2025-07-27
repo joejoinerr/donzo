@@ -1,4 +1,5 @@
 <template>
+    <h1 class="text-2xl mb-8 font-bold text-gray-600">Inbox</h1>
     <ol v-if="inboxActionsCount > 0">
         <ActionListItem v-for="action in inboxActionsList" :key="action.lid" :action="action" />
     </ol>
