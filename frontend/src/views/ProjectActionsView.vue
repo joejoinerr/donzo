@@ -25,19 +25,19 @@ import { useRoute } from 'vue-router';
 const route = useRoute();
 const collection = db.actions.filter(action => !action.deleted && action.projectLid === Number(route.params.projectLid));
 const nextActionsCollection = collection.filter(action => action.state === 'next');
-// const somedayActionsCollection = collection.filter(action => action.state === 'someday');
+const somedayActionsCollection = collection.filter(action => action.state === 'someday');
 const nextActionsList = useObservable(
     liveQuery(() => nextActionsCollection.toArray())
 )
 const nextActionsCount = useObservable(
     liveQuery(() => nextActionsCollection.count())
 )
-// const somedayActionsList = useObservable(
-//     liveQuery(() => somedayActionsCollection.toArray())
-// )
-// const somedayActionsCount = useObservable(
-//     liveQuery(() => somedayActionsCollection.count())
-// )
+const somedayActionsList = useObservable(
+    liveQuery(() => somedayActionsCollection.toArray())
+)
+const somedayActionsCount = useObservable(
+    liveQuery(() => somedayActionsCollection.count())
+)
 const project = useObservable(
     liveQuery(() => db.projects.get(Number(route.params.projectLid)))
 )
