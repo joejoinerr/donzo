@@ -1,15 +1,15 @@
 <template>
     <h1 class="text-2xl mb-8 font-bold text-gray-600">{{ project?.title || 'Loading...' }}</h1>
-    <template v-if="nextActionsCount > 0">
+    <template v-if="nextActionsCount && nextActionsCount > 0">
         <h2>Next</h2>
         <ol>
-            <ActionListItem v-for="action in nextActionsList" :key="action.lid" :action="action" />
+            <ActionListItem v-for="action in nextActionsList || []" :key="action.lid" :action="action" />
         </ol>
     </template>
-    <template v-if="somedayActionsCount > 0">
+    <template v-if="somedayActionsCount && somedayActionsCount > 0">
         <h2>Someday</h2>
         <ol>
-            <ActionListItem v-for="action in somedayActionsList" :key="action.lid" :action="action" />
+            <ActionListItem v-for="action in somedayActionsList || []" :key="action.lid" :action="action" />
         </ol>
     </template>
     <!-- <div v-else class="italic">No items to show right now</div> -->
