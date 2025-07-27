@@ -7,10 +7,10 @@
         <div class="flex-1">
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
-                    <label :for="`project-${project.lid}`" :class="{ 'line-through': project.completed }">
+                    <label :for="`project-${project.lid}`">
                         <button class="cursor-pointer hover:underline" @click.stop.prevent="editProject">{{
                             project.title
-                            }}</button>
+                        }}</button>
                     </label>
                     <button v-if="project.notes"
                         class="leading-none ml-4 bg-gray-200 cursor-pointer font-bold w-[20px] h-[20px] text-center"
