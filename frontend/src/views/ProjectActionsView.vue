@@ -18,7 +18,7 @@
             <ActionListItem v-for="action in completedActionsList" :key="action.lid" :action="action" />
         </ol>
     </div>
-    <div v-if="actionsList.length === 0" class="italic">No items to show right now</div>
+    <div v-if="actionsList.value && actionsList.value.length === 0" class="italic">No items to show right now</div>
 </template>
 
 <script setup>
