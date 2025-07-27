@@ -16,9 +16,9 @@
         </div>
     </header>
     <main class="flex items-stretch h-full">
-        <nav class="bg-white py-4 w-[220px]">
+        <nav class="bg-white w-[220px]">
             <ul class="flex flex-col justify-between h-full">
-                <div>
+                <div class="py-1">
                     <li>
                         <RouterLink :to="{ name: 'inbox' }" class="block px-3 py-4 hover:bg-gray-100 "
                             exactActiveClass="bg-gray-100 border-l-2 border-blue-500">
@@ -33,11 +33,17 @@
                             exactActiveClass="bg-gray-100 border-l-2 border-blue-500">Waiting</RouterLink>
                     </li>
                     <li>
+                        <RouterLink :to="{ name: 'someday' }" class="block px-3 py-4 hover:bg-gray-100"
+                            exactActiveClass="bg-gray-100 border-l-2 border-blue-500">Someday</RouterLink>
+                    </li>
+                </div>
+                <div class="border-t border-gray-200 py-1">
+                    <li>
                         <RouterLink :to="{ name: 'projects' }" class="block px-3 py-4 hover:bg-gray-100"
                             exactActiveClass="bg-gray-100 border-l-2 border-blue-500">Projects</RouterLink>
                     </li>
                 </div>
-                <div>
+                <div class="border-t border-gray-200 py-1">
                     <li>
                         <RouterLink :to="{ name: 'deleted' }" class="block px-3 py-4 hover:bg-gray-100"
                             exactActiveClass="bg-gray-100 border-l-2 border-blue-500">Deleted</RouterLink>

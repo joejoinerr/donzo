@@ -5,6 +5,7 @@ import WaitingView from '@/views/WaitingView.vue'
 import ProjectsView from '@/views/ProjectsView.vue'
 import DeletedView from '@/views/DeletedView.vue'
 import ProjectActionsView from '@/views/ProjectActionsView.vue'
+import SomedayView from '@/views/SomedayView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -23,6 +24,11 @@ const router = createRouter({
       path: '/inbox',
       name: 'inbox',
       component: InboxView,
+    },
+    {
+      path: '/someday',
+      name: 'someday',
+      component: SomedayView,
     },
     {
       path: '/deleted',

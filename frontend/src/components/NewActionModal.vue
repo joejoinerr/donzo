@@ -97,7 +97,9 @@ import { db } from '@/db';
 import { useActionModalStore } from '@/stores/modalStore';
 import { useObservable } from '@vueuse/rxjs';
 import { liveQuery } from 'dexie';
+import { useRoute } from 'vue-router';
 
+const route = useRoute();
 const projectsList = useObservable(
     liveQuery(() => db.projects.filter(project => !project.deleted).toArray())
 );

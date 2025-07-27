@@ -1,9 +1,18 @@
 <template>
     <h1 class="text-2xl mb-8 font-bold text-gray-600">{{ project.title }}</h1>
-    <ol v-if="nextActionsCount > 0">
-        <ActionListItem v-for="action in nextActionsList" :key="action.lid" :action="action" />
-    </ol>
-    <div v-else class="italic">No items to show right now</div>
+    <template v-if="nextActionsCount > 0">
+        <h2>Next</h2>
+        <ol>
+            <ActionListItem v-for="action in nextActionsList" :key="action.lid" :action="action" />
+        </ol>
+    </template>
+    <template v-if="somedayActionsCount > 0">
+        <h2>Someday</h2>
+        <ol>
+            <ActionListItem v-for="action in somedayActionsList" :key="action.lid" :action="action" />
+        </ol>
+    </template>
+    <!-- <div v-else class="italic">No items to show right now</div> -->
 </template>
 
 <script setup>
@@ -15,12 +24,23 @@ import { useRoute } from 'vue-router';
 
 const route = useRoute();
 const collection = db.actions.filter(action => !action.deleted && action.projectLid === Number(route.params.projectLid));
+const nextActionsCollection = collection.filter(action => action.state === 'next');
+// const somedayActionsCollection = collection.filter(action => action.state === 'someday');
 const nextActionsList = useObservable(
-    liveQuery(() => collection.toArray())
+    liveQuery(() => nextActionsCollection.toArray())
 )
 const nextActionsCount = useObservable(
-    liveQuery(() => collection.count())
+    liveQuery(() => nextActionsCollection.count())
 )
+// const nextActionsList = useObservable(
+//     liveQuery(() => nextActionsCollection.toArray())
+// )
+// const somedayActionsList = useObservable(
+//     liveQuery(() => somedayActionsCollection.toArray())
+// )
+// const somedayActionsCount = useObservable(
+//     liveQuery(() => somedayActionsCollection.count())
+// )
 const project = useObservable(
     liveQuery(() => db.projects.get(Number(route.params.projectLid)))
 )
