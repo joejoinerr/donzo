@@ -1,18 +1,24 @@
 <template>
     <h1 class="text-2xl mb-8 font-bold text-gray-600">{{ project?.title || 'Loading...' }}</h1>
-    <template v-if="nextActionsCount && nextActionsCount > 0">
-        <h2>Next</h2>
+    <div v-if="nextActionsList.length > 0" class="not-last:mb-8">
+        <h2 class="mb-3 font-bold text-gray-600">Next</h2>
         <ol>
-            <ActionListItem v-for="action in nextActionsList || []" :key="action.lid" :action="action" />
+            <ActionListItem v-for="action in nextActionsList" :key="action.lid" :action="action" />
         </ol>
-    </template>
-    <template v-if="somedayActionsCount && somedayActionsCount > 0">
-        <h2>Someday</h2>
+    </div>
+    <div v-if="somedayActionsList.length > 0" class="not-last:mb-8">
+        <h2 class="mb-3 font-bold text-gray-600">Someday</h2>
         <ol>
-            <ActionListItem v-for="action in somedayActionsList || []" :key="action.lid" :action="action" />
+            <ActionListItem v-for="action in somedayActionsList" :key="action.lid" :action="action" />
         </ol>
-    </template>
-    <!-- <div v-else class="italic">No items to show right now</div> -->
+    </div>
+    <div v-if="completedActionsList.length > 0">
+        <h2 class="mb-3 font-bold text-gray-600">Done</h2>
+        <ol>
+            <ActionListItem v-for="action in completedActionsList" :key="action.lid" :action="action" />
+        </ol>
+    </div>
+    <div v-if="actionsList.length === 0" class="italic">No items to show right now</div>
 </template>
 
 <script setup>
@@ -21,58 +27,22 @@ import { useObservable } from '@vueuse/rxjs';
 import { liveQuery } from 'dexie';
 import { db } from '../db';
 import { useRoute } from 'vue-router';
+import { computed } from 'vue';
 
 const route = useRoute();
 const projectLid = Number(route.params.projectLid);
 
-// Use independent liveQuery calls instead of chained filters
-const nextActionsList = useObservable(
+const actionsList = useObservable(
     liveQuery(() =>
         db.actions
-            .filter(action =>
-                !action.deleted &&
-                action.projectLid === projectLid &&
-                action.state === 'next'
-            )
+            .filter(action => !action.deleted && action.projectLid === projectLid)
             .toArray()
     )
 )
 
-const nextActionsCount = useObservable(
-    liveQuery(() =>
-        db.actions
-            .filter(action =>
-                !action.deleted &&
-                action.projectLid === projectLid &&
-                action.state === 'next'
-            )
-            .count()
-    )
-)
-
-const somedayActionsList = useObservable(
-    liveQuery(() =>
-        db.actions
-            .filter(action =>
-                !action.deleted &&
-                action.projectLid === projectLid &&
-                action.state === 'someday'
-            )
-            .toArray()
-    )
-)
-
-const somedayActionsCount = useObservable(
-    liveQuery(() =>
-        db.actions
-            .filter(action =>
-                !action.deleted &&
-                action.projectLid === projectLid &&
-                action.state === 'someday'
-            )
-            .count()
-    )
-)
+const nextActionsList = computed(() => actionsList ? actionsList.value.filter(a => !a.completed && a.state === 'next') : []);
+const somedayActionsList = computed(() => actionsList ? actionsList.value.filter(a => !a.completed && a.state === 'someday') : []);
+const completedActionsList = computed(() => actionsList ? actionsList.value.filter(a => a.completed) : []);
 
 const project = useObservable(
     liveQuery(() => db.projects.get(projectLid))
