@@ -9,7 +9,9 @@
                 +</button>
         </div>
         <div>
-            <button class="py-2 px-3 bg-red-200 cursor-pointer" @click="clearDeleted">Clear deleted
+            <button class="py-2 px-3 bg-red-200 cursor-pointer" @click="clearCompleted">Clear
+                completed</button>
+            <button class="py-2 px-3 bg-red-200 cursor-pointer ml-2" @click="clearDeleted">Clear deleted
                 (debug)</button>
         </div>
     </header>
@@ -18,35 +20,32 @@
             <ul class="flex flex-col justify-between h-full">
                 <div>
                     <li>
-                        <RouterLink to="/inbox" class="block px-3 py-4 hover:bg-gray-100 "
+                        <RouterLink :to="{ name: 'inbox' }" class="block px-3 py-4 hover:bg-gray-100 "
                             exactActiveClass="bg-gray-100 border-l-2 border-blue-500">
                             Inbox</RouterLink>
                     </li>
                     <li>
-                        <RouterLink to="/next" class="block px-3 py-4 hover:bg-gray-100"
+                        <RouterLink :to="{ name: 'next' }" class="block px-3 py-4 hover:bg-gray-100"
                             exactActiveClass="bg-gray-100 border-l-2 border-blue-500">Next</RouterLink>
                     </li>
                     <li>
-                        <RouterLink to="/waiting" class="block px-3 py-4 hover:bg-gray-100"
+                        <RouterLink :to="{ name: 'waiting' }" class="block px-3 py-4 hover:bg-gray-100"
                             exactActiveClass="bg-gray-100 border-l-2 border-blue-500">Waiting</RouterLink>
                     </li>
                     <li>
-                        <RouterLink to="/projects" class="block px-3 py-4 hover:bg-gray-100"
+                        <RouterLink :to="{ name: 'projects' }" class="block px-3 py-4 hover:bg-gray-100"
                             exactActiveClass="bg-gray-100 border-l-2 border-blue-500">Projects</RouterLink>
                     </li>
                 </div>
                 <div>
                     <li>
-                        <RouterLink to="/deleted" class="block px-3 py-4 hover:bg-gray-100"
+                        <RouterLink :to="{ name: 'deleted' }" class="block px-3 py-4 hover:bg-gray-100"
                             exactActiveClass="bg-gray-100 border-l-2 border-blue-500">Deleted</RouterLink>
                     </li>
                 </div>
             </ul>
         </nav>
         <section class="flex-1 p-6">
-            <button class="py-2 px-3 mb-8 bg-red-200 cursor-pointer mr-2" @click="clearCompleted">Clear
-                completed</button>
-
             <RouterView />
         </section>
     </main>

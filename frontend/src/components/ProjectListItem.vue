@@ -4,16 +4,12 @@
         <div class="flex-1">
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
-                    <label :for="`project-${project.lid}`">
-                        <button
-                            class="mr-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full cursor-pointer hover:bg-blue-200"
-                            @click.stop.prevent="showProjectActions">
-                            {{ actionCount }} Actions
-                        </button>
-                        <button class="cursor-pointer hover:underline" @click.stop.prevent="editProject">{{
-                            project.title
-                        }}</button>
-                    </label>
+                    <RouterLink :to="{ name: 'project-actions', params: { projectLid: project.lid } }"
+                        class="mr-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full cursor-pointer hover:bg-blue-200">
+                        {{ actionCount }} Actions</RouterLink>
+                    <button class="cursor-pointer hover:underline" @click.stop.prevent="editProject">{{
+                        project.title
+                    }}</button>
                     <button v-if="project.notes"
                         class="leading-none ml-4 bg-gray-200 cursor-pointer font-bold w-[20px] h-[20px] text-center"
                         @click="showHideNotes">
@@ -36,26 +32,24 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import { db } from '@/db';
 import { useProjectModalStore } from '@/stores/modalStore';
 import { liveQuery } from 'dexie';
 import { useObservable } from '@vueuse/rxjs';
 import ItemCheckbox from '@/components/ItemCheckbox.vue';
+import { RouterLink } from 'vue-router';
 
 const modalStore = useProjectModalStore();
-
 const props = defineProps({
     project: {
         type: Object,
         required: true
     }
 });
-
 const actionCount = useObservable(
     liveQuery(() => db.actions.where('projectLid').equals(props.project.lid).count())
 );
-
 const isNotesVisible = ref(false);
 
 function showHideNotes() {
@@ -68,12 +62,6 @@ function deleteProject(lid) {
 
 function editProject() {
     modalStore.openEdit(props.project);
-}
-
-function showProjectActions() {
-    // Handle what happens when the action count button is clicked
-    // Maybe navigate to a filtered view of actions for this project
-    console.log(`Show actions for project ${props.project.lid}`);
 }
 
 function toggleCompleteProject(lid) {

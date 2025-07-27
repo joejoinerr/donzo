@@ -20,7 +20,11 @@
                         @click="showHideNotes">
                         {{ isNotesVisible ? '-' : '+' }}
                     </button>
-                    <a v-if="action.projectLid" href="#" class="ml-4">{{ projectTitle }}</a>
+                    <RouterLink v-if="action.projectLid && $route.name !== 'project-actions'"
+                        :to="{ name: 'project-actions', params: { projectLid: action.projectLid } }"
+                        class="ml-4 text-blue-600 hover:underline">{{
+                            projectTitle
+                        }}</RouterLink>
                 </div>
                 <div class="flex items-center gap-x-3">
                     <div class="rounded-full bg-gray-200 px-2 text-sm" v-if="action.time">
@@ -47,6 +51,7 @@
 import { ref, computed, onMounted, watch } from 'vue';
 import { db } from '@/db';
 import { useActionModalStore } from '@/stores/modalStore';
+import { RouterLink } from 'vue-router';
 
 const modalStore = useActionModalStore();
 
