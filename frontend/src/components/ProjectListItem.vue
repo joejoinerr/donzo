@@ -8,6 +8,11 @@
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
                     <label :for="`project-${project.lid}`">
+                        <button 
+                            class="mr-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full cursor-pointer hover:bg-blue-200"
+                            @click.stop.prevent="showProjectActions">
+                            {{ actionCount }}
+                        </button>
                         <button class="cursor-pointer hover:underline" @click.stop.prevent="editProject">{{
                             project.title
                         }}</button>
@@ -37,6 +42,7 @@
 import { ref, computed } from 'vue';
 import { db } from '@/db';
 import { useProjectModalStore } from '@/stores/modalStore';
+import { liveQuery } from 'dexie';
 
 const modalStore = useProjectModalStore();
 
@@ -59,6 +65,12 @@ const isDueOrOverdue = computed(() => {
     return dueDate <= today;
 });
 
+const actionCount = computed(() => {
+    // This assumes actions have a project_id field linking to the project
+    // You'll need to adjust the field name based on your actual schema
+    return db.actions.where('project_id').equals(props.project.lid).count();
+});
+
 const isNotesVisible = ref(false);
 
 function showHideNotes() {
@@ -78,5 +90,11 @@ function deleteProject(lid) {
 
 function editProject() {
     modalStore.openEdit(props.project);
+}
+
+function showProjectActions() {
+    // Handle what happens when the action count button is clicked
+    // Maybe navigate to a filtered view of actions for this project
+    console.log(`Show actions for project ${props.project.lid}`);
 }
 </script>
