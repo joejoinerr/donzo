@@ -12,11 +12,12 @@
                         {{ action.waitingFor || 'Someone' }}
                     </div>
                     <label :for="`action-${action.lid}`" :class="{ 'line-through': action.completed }">
-                        <button class="cursor-pointer hover:underline" @click.stop.prevent="editAction">{{ action.title }}</button>
+                        <button class="cursor-pointer hover:underline" @click.stop.prevent="editAction">{{ action.title
+                            }}</button>
                     </label>
                     <button v-if="action.notes"
                         class="leading-none ml-4 bg-gray-200 cursor-pointer font-bold w-[20px] h-[20px] text-center"
-                        @click="toggleNotes">
+                        @click="showHideNotes">
                         {{ isNotesVisible ? '-' : '+' }}
                     </button>
                 </div>
@@ -69,7 +70,7 @@ const isDueOrOverdue = computed(() => {
 
 const isNotesVisible = ref(false);
 
-function toggleNotes() {
+function showHideNotes() {
     isNotesVisible.value = !isNotesVisible.value;
 }
 
