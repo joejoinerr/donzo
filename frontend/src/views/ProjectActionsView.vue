@@ -41,10 +41,4 @@ const somedayActionsCount = useObservable(
 const project = useObservable(
     liveQuery(() => db.projects.get(Number(route.params.projectLid)))
 )
-
-// console.log('nextActionsCount:', nextActionsCount)
-// console.log('somedayActionsCount:', somedayActionsCount)
-// console.log('nextActionsList:', nextActionsList)
-// console.log('project:', project)
-// console.log('route.params.projectLid:', route.params.projectLid)
 </script>
