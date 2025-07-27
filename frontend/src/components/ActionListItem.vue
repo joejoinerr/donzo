@@ -44,7 +44,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { db } from '@/db';
 import { useActionModalStore } from '@/stores/modalStore';
 
@@ -57,11 +57,23 @@ const props = defineProps({
     }
 });
 
-const projectTitle = computed(async () => {
-    // if (!props.action.projectLid) return;
+const projectTitle = ref('');
+
+async function fetchProjectTitle() {
+    if (!props.action.projectLid) {
+        projectTitle.value = '';
+        return;
+    }
     const project = await db.projects.get(props.action.projectLid);
-    console.log('Project:', project);
-    return project ? project.title : 'Unknown Project';
+    projectTitle.value = project ? project.title : 'Unknown Project';
+}
+
+onMounted(() => {
+    fetchProjectTitle();
+});
+
+watch(() => props.action.projectLid, () => {
+    fetchProjectTitle();
 });
 
 const isDueOrOverdue = computed(() => {
