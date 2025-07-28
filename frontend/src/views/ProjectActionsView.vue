@@ -1,9 +1,10 @@
 <template>
     <div class="bg-white p-6 rounded-lg shadow-sm mb-8">
-        <ItemCheckbox :item="project" :item-type="'project'" @click="toggleCompleteProject(project)" />
+        <ItemCheckbox :due-date="project ? project.due : null" :completed="project ? project.completed : null"
+            @check="toggleCompleteProject()" />
         <button class="cursor-pointer" @click="modalStore.openEdit(project)">
             <h1 class="inline-block text-lg font-bold text-gray-600 hover:underline">{{ project?.title || 'Loading...'
-            }}</h1>
+                }}</h1>
         </button>
     </div>
     <div v-if="nextActionsList.length > 0" class="not-last:mb-8">
@@ -57,7 +58,13 @@ const project = useObservable(
     liveQuery(async () => await db.projects.get(projectLid))
 )
 
-function toggleCompleteProject(project) {
-    db.projects.update(project.lid, { completed: !project.completed });
+async function toggleCompleteProject() {
+    const newCompletedState = !project.value.completed;
+    await db.projects.update(project.value.lid, { completed: newCompletedState });
+    // If the project is being marked as completed, mark all its actions as completed
+    if (newCompletedState) {
+        await db.actions.filter(action => action.projectLid === project.value.lid && !action.completed)
+            .modify({ completed: true });
+    }
 }
 </script>

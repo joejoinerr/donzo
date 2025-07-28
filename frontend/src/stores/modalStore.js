@@ -43,10 +43,10 @@ export const useProjectModalStore = defineStore('projectModal', () => {
     currentProject.value = null
   }
 
-  function openEdit(action) {
+  function openEdit(project) {
     isOpen.value = true
     editMode.value = true
-    currentProject.value = { ...action }
+    currentProject.value = { ...project }
   }
 
   function close() {

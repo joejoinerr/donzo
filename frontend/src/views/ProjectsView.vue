@@ -7,6 +7,7 @@
 </template>
 
 <script setup>
+import { computed } from 'vue';
 import ProjectListItem from '@/components/ProjectListItem.vue';
 import { useObservable } from '@vueuse/rxjs';
 import { liveQuery } from 'dexie';
@@ -14,10 +15,8 @@ import { db } from '../db';
 
 const collection = db.projects.filter(project => !project.deleted);
 const projectsList = useObservable(
-    liveQuery(() => collection.toArray())
+    liveQuery(async () => await collection.toArray())
 )
 
-const projectsCount = useObservable(
-    liveQuery(() => collection.count())
-)
+const projectsCount = computed(() => projectsList.value ? projectsList.value.length : 0);
 </script>

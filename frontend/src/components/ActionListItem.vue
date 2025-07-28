@@ -3,7 +3,7 @@
         <input :checked="action.completed"
             class="relative mr-4 mt-2 appearance-none border-1 w-[18px] h-[18px] rounded-sm cursor-pointer checked:bg-gray-500 checked:border-gray-500 before:content-['✔'] before:leading-none before:absolute before:left-[2px] before:text-white before:text-sm before:invisible checked:before:visible"
             :class="{ 'bg-red-400': isDueOrOverdue, 'border-red-600': isDueOrOverdue, 'border-gray-400': !isDueOrOverdue }"
-            type="checkbox" :id="`action-${action.lid}`" name="todo" @click="toggleCompleteAction(action.lid)">
+            type="checkbox" :id="`action-${action.lid}`" name="todo" @change="toggleCompleteAction(action.lid)">
         <div class="flex-1">
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
@@ -13,7 +13,7 @@
                     </div>
                     <label :for="`action-${action.lid}`" :class="{ 'line-through': action.completed }">
                         <button class="cursor-pointer hover:underline" @click.stop.prevent="editAction">{{ action.title
-                        }}</button>
+                            }}</button>
                     </label>
                     <button v-if="action.notes"
                         class="leading-none ml-4 bg-gray-200 cursor-pointer font-bold w-[20px] h-[20px] text-center"
