@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { useObservable } from '@vueuse/rxjs';
+import { computed } from 'vue';
 import { liveQuery } from 'dexie';
 import { db } from '@/db';
 
@@ -22,7 +23,7 @@ export const useActionStore = defineStore('actions', () => {
         liveQuery(() => db.actions.where('state').equals('someday').filter(isNotDeleted).toArray())
     );
 
-    const projects = useObservable(
+    const projectData = useObservable(
         liveQuery(async () => {
             const projectsData = await db.projects.filter(isNotDeleted).toArray();
             const actionsData = await db.actions.where('projectLid').notEqual(null).filter(isNotDeleted).toArray();
@@ -34,16 +35,20 @@ export const useActionStore = defineStore('actions', () => {
             }, {});
             
             // Add action count to each project
-            return projectsData.map(project => ({
+            const projectsWithCounts = projectsData.map(project => ({
                 ...project,
                 actionCount: actionCounts[project.lid] || 0
             }));
+            
+            return {
+                projects: projectsWithCounts,
+                actions: actionsData
+            };
         })
     );
 
-    const projectActions = useObservable(
-        liveQuery(() => db.actions.where('projectLid').notEqual(null).filter(isNotDeleted).toArray())
-    );
+    const projects = computed(() => projectData.value?.projects || []);
+    const projectActions = computed(() => projectData.value?.actions || []);
 
     return {
         inboxActions,
