@@ -23,7 +23,22 @@ export const useActionStore = defineStore('actions', () => {
     );
 
     const projects = useObservable(
-        liveQuery(() => db.projects.filter(isNotDeleted).toArray())
+        liveQuery(async () => {
+            const projectsData = await db.projects.filter(isNotDeleted).toArray();
+            const actionsData = await db.actions.where('projectLid').notEqual(null).filter(isNotDeleted).toArray();
+            
+            // Create a map of project IDs to action counts
+            const actionCounts = actionsData.reduce((acc, action) => {
+                acc[action.projectLid] = (acc[action.projectLid] || 0) + 1;
+                return acc;
+            }, {});
+            
+            // Add action count to each project
+            return projectsData.map(project => ({
+                ...project,
+                actionCount: actionCounts[project.lid] || 0
+            }));
+        })
     );
 
     const projectActions = useObservable(
