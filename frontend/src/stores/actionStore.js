@@ -29,9 +29,9 @@ export const useActionStore = defineStore('actions', () => {
             const actionsData = await db.actions.where('projectLid').notEqual(null).filter(isNotDeleted).toArray();
             
             // Create a map of project IDs to action counts
-            const actionCounts = actionsData.reduce((acc, action) => {
-                acc[action.projectLid] = (acc[action.projectLid] || 0) + 1;
-                return acc;
+            const actionCounts = actionsData.reduce((accumulator, action) => {
+                accumulator[action.projectLid] = (accumulator[action.projectLid] || 0) + 1;
+                return accumulator;
             }, {});
             
             // Add action count to each project
