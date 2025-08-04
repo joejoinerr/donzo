@@ -23,32 +23,27 @@ export const useActionStore = defineStore('actions', () => {
         liveQuery(() => db.actions.where('state').equals('someday').filter(isNotDeleted).toArray())
     );
 
-    const projectData = useObservable(
+    const projects = useObservable(
         liveQuery(async () => {
             const projectsData = await db.projects.filter(isNotDeleted).toArray();
             const actionsData = await db.actions.where('projectLid').notEqual(null).filter(isNotDeleted).toArray();
             
-            // Create a map of project IDs to action counts
-            const actionCounts = actionsData.reduce((accumulator, action) => {
-                accumulator[action.projectLid] = (accumulator[action.projectLid] || 0) + 1;
+            // Group actions by project ID
+            const actionsByProject = actionsData.reduce((accumulator, action) => {
+                if (!accumulator[action.projectLid]) {
+                    accumulator[action.projectLid] = [];
+                }
+                accumulator[action.projectLid].push(action);
                 return accumulator;
             }, {});
             
-            // Add action count to each project
-            const projectsWithCounts = projectsData.map(project => ({
+            // Add actions array to each project
+            return projectsData.map(project => ({
                 ...project,
-                actionCount: actionCounts[project.lid] || 0
+                actions: actionsByProject[project.lid] || []
             }));
-            
-            return {
-                projects: projectsWithCounts,
-                actions: actionsData
-            };
         })
     );
-
-    const projects = computed(() => projectData.value?.projects || []);
-    const projectActions = computed(() => projectData.value?.actions || []);
 
     return {
         inboxActions,
@@ -56,6 +51,5 @@ export const useActionStore = defineStore('actions', () => {
         waitingActions,
         somedayActions,
         projects,
-        projectActions,
     };
 });
