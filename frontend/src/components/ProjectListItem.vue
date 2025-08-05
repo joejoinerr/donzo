@@ -6,10 +6,10 @@
                 <div class="flex items-center">
                     <RouterLink :to="{ name: 'project-actions', params: { projectLid: project.lid } }"
                         class="mr-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full cursor-pointer hover:bg-blue-200">
-                        {{ actionCount }} Actions</RouterLink>
+                        {{ project.actions.length }} Actions</RouterLink>
                     <button class="cursor-pointer hover:underline" @click="editProject">{{
                         project.title
-                        }}</button>
+                    }}</button>
                     <button v-if="project.notes"
                         class="leading-none ml-4 bg-gray-200 cursor-pointer font-bold w-[20px] h-[20px] text-center"
                         @click="showHideNotes">
@@ -35,8 +35,6 @@
 import { ref } from 'vue';
 import { db } from '@/db';
 import { useProjectModalStore } from '@/stores/modalStore';
-import { liveQuery } from 'dexie';
-import { useObservable } from '@vueuse/rxjs';
 import ItemCheckbox from '@/components/ItemCheckbox.vue';
 import { RouterLink } from 'vue-router';
 
@@ -47,11 +45,8 @@ const props = defineProps({
         required: true
     }
 });
-const actionCount = useObservable(
-    liveQuery(async () => await db.actions.filter(a => !a.deleted && !a.completed && a.projectLid === props.project.lid).count())
-);
-const isNotesVisible = ref(false);
 
+const isNotesVisible = ref(false);
 function showHideNotes() {
     isNotesVisible.value = !isNotesVisible.value;
 }
@@ -63,20 +58,6 @@ function deleteProject(lid) {
 function editProject() {
     modalStore.openEdit(props.project);
 }
-
-// function toggleCompleteProject(lid) {
-//     db.transaction('rw', [db.projects], async () => {
-//         const project = await db.projects.get(lid)
-//         const newCompletedState = !project.completed;
-//         db.projects.update(lid, { completed: newCompletedState });
-
-//         // Mark all actions in this project as completed but if project is completed,
-//         // but we don't want to uncomplete them if it's undone.
-//         if (newCompletedState) {
-//             db.actions.where('projectLid').equals(lid).modify({ completed: !project.completed });
-//         }
-//     });
-// }
 
 async function toggleCompleteProject() {
     db.transaction('rw', [db.projects], async () => {

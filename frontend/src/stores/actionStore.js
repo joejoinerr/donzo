@@ -27,7 +27,8 @@ export const useActionStore = defineStore('actions', () => {
         liveQuery(() => 
             Promise.all([
                 db.projects.filter(isNotDeleted).toArray(),
-                db.actions.where('projectLid').notEqual(null).filter(isNotDeleted).toArray()
+                // Filter for actions that are associated with projects
+                db.actions.filter((a) => a.projectLid).filter(isNotDeleted).toArray()
             ]).then(([projectsData, actionsData]) => {
                 // Group actions by project ID
                 const actionsByProject = actionsData.reduce((accumulator, action) => {
