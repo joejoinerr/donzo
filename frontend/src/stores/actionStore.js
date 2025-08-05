@@ -24,25 +24,27 @@ export const useActionStore = defineStore('actions', () => {
     );
 
     const projects = useObservable(
-        liveQuery(async () => {
-            const projectsData = await db.projects.filter(isNotDeleted).toArray();
-            const actionsData = await db.actions.where('projectLid').notEqual(null).filter(isNotDeleted).toArray();
-            
-            // Group actions by project ID
-            const actionsByProject = actionsData.reduce((accumulator, action) => {
-                if (!accumulator[action.projectLid]) {
-                    accumulator[action.projectLid] = [];
-                }
-                accumulator[action.projectLid].push(action);
-                return accumulator;
-            }, {});
-            
-            // Add actions array to each project
-            return projectsData.map(project => ({
-                ...project,
-                actions: actionsByProject[project.lid] || []
-            }));
-        })
+        liveQuery(() => 
+            Promise.all([
+                db.projects.filter(isNotDeleted).toArray(),
+                db.actions.where('projectLid').notEqual(null).filter(isNotDeleted).toArray()
+            ]).then(([projectsData, actionsData]) => {
+                // Group actions by project ID
+                const actionsByProject = actionsData.reduce((accumulator, action) => {
+                    if (!accumulator[action.projectLid]) {
+                        accumulator[action.projectLid] = [];
+                    }
+                    accumulator[action.projectLid].push(action);
+                    return accumulator;
+                }, {});
+                
+                // Add actions array to each project
+                return projectsData.map(project => ({
+                    ...project,
+                    actions: actionsByProject[project.lid] || []
+                }));
+            })
+        )
     );
 
     return {
