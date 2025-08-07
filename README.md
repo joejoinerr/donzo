@@ -45,7 +45,7 @@ A modern task management application built with Django and Vue.js, designed to h
 ## Getting Started
 
 ### Prerequisites
-- Python 3.8+
+- Python 3.12+
 - Node.js 16+
 - uv (Python package manager)
 
