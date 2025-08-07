@@ -143,11 +143,3 @@ Frontend:
 cd frontend
 npm run build
 ```
-
-## Contributing
-
-This project is being built in public. Feel free to submit issues, feature requests, or pull requests.
-
-## License
-
-[Add your license information here]
