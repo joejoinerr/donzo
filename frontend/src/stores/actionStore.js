@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia';
 import { useObservable } from '@vueuse/rxjs';
-import { computed } from 'vue';
 import { liveQuery } from 'dexie';
 import { db } from '@/db';
 
