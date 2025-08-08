@@ -150,7 +150,7 @@ function clearForm() {
     Object.assign(newActionData, newActionDefaults)
 }
 
-function addAction() {
+async function addAction() {
     // Title is required
     if (!newActionData.title) return;
 
@@ -159,6 +159,7 @@ function addAction() {
         completed: modalStore.editMode ? modalStore.currentAction.completed : false,
         deleted: false
     }
+    
     action.time = action.time || null
     action.energy = action.energy || null
     action.due = action.due || null
@@ -169,16 +170,21 @@ function addAction() {
     }
     action.tags = action.tags.length ? action.tags : null; // Ensure tags is null if empty
 
-    if (modalStore.editMode && modalStore.currentAction) {
-        // Update existing action
-        db.actions.update(modalStore.currentAction.lid, action)
-    } else {
-        // Add new action
-        db.actions.add(action)
+    try {
+        if (modalStore.editMode && modalStore.currentAction) {
+            await db.actions.update(modalStore.currentAction.lid, action)
+            console.log('Action updated successfully')
+        } else {
+            await db.actions.add(action)
+            console.log('Action added successfully')
+        }
+        
+        // Reset the form and close the modal only on success
+        clearForm()
+        modalStore.close()
+    } catch (error) {
+        console.error('Database operation failed:', error)
+        // Handle error appropriately - maybe show a user message
     }
-
-    // Reset the form and close the modal
-    clearForm()
-    modalStore.close()
 };
 </script>
