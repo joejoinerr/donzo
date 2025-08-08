@@ -1,6 +1,9 @@
+> [!IMPORTANT]
+> This project is being built in public and is not yet ready for use.
+
 # Donzo - Task Management Application
 
-A modern task management application built with Django and Vue.js, designed to help you organize and track your tasks effectively.
+A modern task management application for the GTD methodology, built with Django and Vue.js.
 
 ## Features
 
