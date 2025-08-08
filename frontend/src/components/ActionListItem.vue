@@ -27,8 +27,8 @@
                         }}</RouterLink>
                 </div>
                 <div class="flex items-center gap-x-3">
-                    <template v-if="action.tags">
-                        <div class="rounded-full bg-gray-200 px-2 text-sm" v-for="tag in action.tags">
+                    <template v-if="tagNames.length > 0">
+                        <div v-for="tag in tagNames" :key="tag" class="rounded-full bg-gray-200 px-2 text-sm">
                             {{ tag }}
                         </div>
                     </template>
@@ -57,14 +57,23 @@ import { ref, computed, onMounted, watch } from 'vue';
 import { db } from '@/db';
 import { useActionModalStore } from '@/stores/modalStore';
 import { RouterLink } from 'vue-router';
+import { useActionStore } from '@/stores/actionStore';
+import { storeToRefs } from 'pinia';
 
 const modalStore = useActionModalStore();
+const actionStore = useActionStore();
+const { tags } = storeToRefs(actionStore);
 
 const props = defineProps({
     action: {
         type: Object,
         required: true
     }
+});
+
+const tagNames = computed(() => {
+    if (!props.action.tags || props.action.tags.length === 0) return [];
+    return tags.value.filter(tag => props.action.tags.includes(tag.lid)).map(tag => tag.name);
 });
 
 const projectTitle = ref('');
