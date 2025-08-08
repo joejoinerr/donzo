@@ -10,6 +10,13 @@
                 <input autofocus type="text" name="action-title" id="action-title"
                     class="block mb-4 w-full border-1 border-gray-300 px-4 py-3" placeholder="Do the dishes"
                     autocomplete="off" required v-model.trim="newActionData.title">
+                <label for="tags-list" class="block mb-2">Tags</label>
+                <select id="tags-list" class="block mb-4 border-1 border-gray-300 px-4 py-3" multiple
+                    v-model="newActionData.tags">
+                    <option v-for="tag in actionStore.tags" :key="tag.lid" :value="tag.lid">
+                        {{ tag.name }}
+                    </option>
+                </select>
                 <div class="flex gap-8">
                     <div>
                         <label for="action-state" class="block mb-2">State</label>
@@ -98,8 +105,9 @@ import { useActionModalStore } from '@/stores/modalStore';
 import { useObservable } from '@vueuse/rxjs';
 import { liveQuery } from 'dexie';
 import { useRoute } from 'vue-router';
+import { useActionStore } from '@/stores/actionStore';
 
-const route = useRoute();
+const actionStore = useActionStore();
 const projectsList = useObservable(
     liveQuery(() => db.projects.filter(project => !project.deleted).toArray())
 );
@@ -112,7 +120,8 @@ const newActionDefaults = {
     due: '',
     state: 'inbox',
     waitingFor: '',
-    projectLid: ''
+    projectLid: '',
+    tags: [],
 }
 const newActionData = reactive({ ...newActionDefaults })
 
@@ -128,7 +137,8 @@ watch(() => modalStore.currentAction, (currentAction) => {
             due: currentAction.due || '',
             state: currentAction.state || 'inbox',
             waitingFor: currentAction.waitingFor || '',
-            projectLid: currentAction.projectLid || ''
+            projectLid: currentAction.projectLid || '',
+            tags: currentAction.tags || []
         })
     } else {
         // Reset form for new action
@@ -157,6 +167,7 @@ function addAction() {
     if (action.projectLid && action.state === 'inbox') {
         action.state = 'next'; // If a project is selected, set state to 'next' if it was 'inbox'   
     }
+    action.tags = action.tags.length ? action.tags : null; // Ensure tags is null if empty
 
     if (modalStore.editMode && modalStore.currentAction) {
         // Update existing action
