@@ -22,6 +22,10 @@ export const useActionStore = defineStore('actions', () => {
         liveQuery(() => db.actions.where('state').equals('someday').filter(isNotDeleted).toArray())
     );
 
+    const deletedActions = useObservable(
+        liveQuery(() => db.actions.filter(item => item.deleted).toArray())
+    );
+
     const projects = useObservable(
         liveQuery(() => 
             Promise.all([
@@ -53,5 +57,6 @@ export const useActionStore = defineStore('actions', () => {
         waitingActions,
         somedayActions,
         projects,
+        deletedActions,
     };
 });
