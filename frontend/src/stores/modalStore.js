@@ -13,9 +13,9 @@ export const useActionModalStore = defineStore('actionModal', () => {
   }
 
   function openEdit(action) {
+    currentAction.value = { ...action }
     isOpen.value = true
     editMode.value = true
-    currentAction.value = { ...action }
   }
 
   function close() {
@@ -44,9 +44,9 @@ export const useProjectModalStore = defineStore('projectModal', () => {
   }
 
   function openEdit(project) {
+    currentProject.value = { ...project }
     isOpen.value = true
     editMode.value = true
-    currentProject.value = { ...project }
   }
 
   function close() {
@@ -59,6 +59,24 @@ export const useProjectModalStore = defineStore('projectModal', () => {
     currentProject,
     openNew,
     openEdit,
+    close
+  }
+})
+
+export const useTagModalStore = defineStore('tagModal', () => {
+  const isOpen = ref(false)
+
+  function open() {
+    isOpen.value = true
+  }
+
+  function close() {
+    isOpen.value = false
+  }
+
+  return {
+    isOpen,
+    open,
     close
   }
 })

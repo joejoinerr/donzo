@@ -1,6 +1,7 @@
 <template>
     <NewActionModal v-if="actionModalStore.isOpen" />
     <NewProjectModal v-if="projectModalStore.isOpen" />
+    <TagModal v-if="tagModalStore.isOpen" />
     <div class="flex flex-col h-screen">
         <header class="flex justify-between bg-blue-600 p-4">
             <div>
@@ -8,6 +9,7 @@
                     +</button>
                 <button @click="projectModalStore.openNew()" class="py-2 px-3 bg-white cursor-pointer">New project
                     +</button>
+                <button @click="tagModalStore.open()" class="py-2 px-3 bg-white cursor-pointer ml-3">Tags</button>
             </div>
             <div>
                 <button class="py-2 px-3 bg-red-200 cursor-pointer" @click="clearCompleted">Clear
@@ -59,11 +61,13 @@
 <script setup>
 import NewActionModal from '@/components/NewActionModal.vue';
 import NewProjectModal from '@/components/NewProjectModal.vue';
-import { useActionModalStore, useProjectModalStore } from '@/stores/modalStore';
+import TagModal from '@/components/TagModal.vue';
+import { useActionModalStore, useProjectModalStore, useTagModalStore } from '@/stores/modalStore';
 import { db } from '@/db';
 
 const actionModalStore = useActionModalStore();
 const projectModalStore = useProjectModalStore();
+const tagModalStore = useTagModalStore();
 
 function clearCompleted() {
     db.actions.filter(action => action.completed).modify({ deleted: true })

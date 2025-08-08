@@ -51,6 +51,10 @@ export const useActionStore = defineStore('actions', () => {
         )
     );
 
+    const tags = useObservable(
+        liveQuery(() => db.tags.filter(isNotDeleted).toArray())
+    );
+
     return {
         inboxActions,
         nextActions,
@@ -58,5 +62,6 @@ export const useActionStore = defineStore('actions', () => {
         somedayActions,
         projects,
         deletedActions,
+        tags,
     };
 });
