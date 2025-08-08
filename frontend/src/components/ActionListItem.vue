@@ -13,7 +13,7 @@
                     </div>
                     <label :for="`action-${action.lid}`" :class="{ 'line-through': action.completed }">
                         <button class="cursor-pointer hover:underline" @click.stop.prevent="editAction">{{ action.title
-                        }}</button>
+                            }}</button>
                     </label>
                     <button v-if="action.notes"
                         class="leading-none ml-4 bg-gray-200 cursor-pointer font-bold w-[20px] h-[20px] text-center"
@@ -27,6 +27,11 @@
                         }}</RouterLink>
                 </div>
                 <div class="flex items-center gap-x-3">
+                    <template v-if="action.tags">
+                        <div class="rounded-full bg-gray-200 px-2 text-sm" v-for="tag in action.tags">
+                            {{ tag }}
+                        </div>
+                    </template>
                     <div class="rounded-full bg-gray-200 px-2 text-sm" v-if="action.time">
                         {{ formatTime(action.time) }}
                     </div>

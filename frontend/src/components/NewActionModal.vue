@@ -99,7 +99,7 @@
 </template>
 
 <script setup>
-import { reactive, watch } from 'vue';
+import { reactive, watch, toRaw } from 'vue';
 import { db } from '@/db';
 import { useActionModalStore } from '@/stores/modalStore';
 import { useObservable } from '@vueuse/rxjs';
@@ -155,11 +155,11 @@ async function addAction() {
     if (!newActionData.title) return;
 
     const action = {
-        ...newActionData,
+        ...toRaw(newActionData),
         completed: modalStore.editMode ? modalStore.currentAction.completed : false,
         deleted: false
     }
-    
+
     action.time = action.time || null
     action.energy = action.energy || null
     action.due = action.due || null
@@ -178,7 +178,7 @@ async function addAction() {
             await db.actions.add(action)
             console.log('Action added successfully')
         }
-        
+
         // Reset the form and close the modal only on success
         clearForm()
         modalStore.close()
