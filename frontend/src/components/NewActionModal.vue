@@ -173,10 +173,8 @@ async function addAction() {
     try {
         if (modalStore.editMode && modalStore.currentAction) {
             await db.actions.update(modalStore.currentAction.lid, action)
-            console.log('Action updated successfully')
         } else {
             await db.actions.add(action)
-            console.log('Action added successfully')
         }
 
         // Reset the form and close the modal only on success
@@ -184,7 +182,6 @@ async function addAction() {
         modalStore.close()
     } catch (error) {
         console.error('Database operation failed:', error)
-        // Handle error appropriately - maybe show a user message
     }
 };
 </script>
