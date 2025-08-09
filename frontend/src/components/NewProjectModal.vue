@@ -7,7 +7,7 @@
             </header>
             <form @submit.prevent="addProject" class="p-5">
                 <label class="block mb-2" for="action-title">Title</label>
-                <input autofocus type="text" name="action-title" id="action-title"
+                <input v-focus type="text" name="action-title" id="action-title"
                     class="block mb-4 w-full border-1 border-gray-300 px-4 py-3" placeholder="Do the dishes"
                     autocomplete="off" required v-model.trim="newProjectData.title">
                 <div class="flex gap-8">
