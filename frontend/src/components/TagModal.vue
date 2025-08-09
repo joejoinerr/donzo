@@ -5,14 +5,21 @@
                 <div class="text-white font-bold">Tags</div>
                 <button @click="tagModalStore.close()" class="block bg-white px-2 cursor-pointer">Close</button>
             </header>
-            <input type="text" id="create-tag" name="create-tag"
-                class="block mb-4 w-full border-1 border-gray-300 px-4 py-3" placeholder="Create new tag"
-                v-model.trim="newTagData.name" @keyup.enter="createTag">
+            <div class="flex">
+                <input type="text" id="create-tag" name="create-tag"
+                    class="flex-3 block mb-4 w-full border-1 border-gray-300 px-4 py-3" placeholder="Create new tag"
+                    v-model.trim="newTagData.name" @keyup.enter="createTag">
+                <select v-model="newTagData.type" class="flex-1 block mb-4 w-full border-1 border-gray-300 px-4 py-3">
+                    <option value="context">Context</option>
+                    <option value="person">Person</option>
+                    <option value="area">Area</option>
+                </select>
+            </div>
             <ul>
                 <li v-for="tag in tags" :key="tag.lid" class="flex justify-between px-4 py-2 border-b border-gray-200">
                     <div>
                         <span class="font-bold">{{ tag.name }}</span> <span class="text-sm text-gray-500">({{ tag.type
-                            }})</span>
+                        }})</span>
                     </div>
                     <div><button @click="deleteTag(tag.lid)" class="cursor-pointer hover:underline">Delete</button>
                     </div>
@@ -35,7 +42,7 @@ const tagModalStore = useTagModalStore();
 
 const newTagDefaults = {
     name: '',
-    type: 'context' // Default type, can be changed later
+    type: 'context'
 };
 const newTagData = reactive({ ...newTagDefaults });
 
