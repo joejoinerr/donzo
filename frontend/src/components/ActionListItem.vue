@@ -13,7 +13,7 @@
                     </div>
                     <label :for="`action-${action.lid}`" :class="{ 'line-through': action.completed }">
                         <button class="cursor-pointer hover:underline" @click.stop.prevent="editAction">{{ action.title
-                            }}</button>
+                        }}</button>
                     </label>
                     <button v-if="action.notes"
                         class="leading-none ml-4 bg-gray-200 cursor-pointer font-bold w-[20px] h-[20px] text-center"
@@ -73,6 +73,7 @@ const props = defineProps({
 
 const tagNames = computed(() => {
     if (!props.action.tags || props.action.tags.length === 0) return [];
+    if (!tags.value || tags.value.length === 0) return [];
     return tags.value.filter(tag => props.action.tags.includes(tag.lid)).map(tag => tag.name);
 });
 

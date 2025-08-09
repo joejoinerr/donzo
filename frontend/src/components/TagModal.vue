@@ -9,9 +9,13 @@
                 class="block mb-4 w-full border-1 border-gray-300 px-4 py-3" placeholder="Create new tag"
                 v-model.trim="newTagData.name" @keyup.enter="createTag">
             <ul>
-                <li v-for="tag in tags" :key="tag.lid" class="px-4 py-2 border-b border-gray-200">
-                    <span class="font-bold">{{ tag.name }}</span> <span class="text-sm text-gray-500">({{ tag.type
-                        }})</span>
+                <li v-for="tag in tags" :key="tag.lid" class="flex justify-between px-4 py-2 border-b border-gray-200">
+                    <div>
+                        <span class="font-bold">{{ tag.name }}</span> <span class="text-sm text-gray-500">({{ tag.type
+                            }})</span>
+                    </div>
+                    <div><button @click="deleteTag(tag.lid)" class="cursor-pointer hover:underline">Delete</button>
+                    </div>
                 </li>
             </ul>
         </div>
@@ -22,7 +26,7 @@
 import { useTagModalStore } from '@/stores/modalStore';
 import { db } from '@/db';
 import { useActionStore } from '@/stores/actionStore';
-import { reactive } from 'vue';
+import { reactive, toRaw } from 'vue';
 import { storeToRefs } from 'pinia';
 
 const actionStore = useActionStore();
@@ -41,9 +45,17 @@ function clearForm() {
 
 async function createTag() {
     await db.tags.add({
-        ...newTagData,
-        deleted: false
+        ...toRaw(newTagData),
+        deleted: false,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
     });
     clearForm();
+}
+
+async function deleteTag(lid) {
+    const confirmDelete = confirm('Are you sure you want to delete this tag?');
+    if (!confirmDelete) return;
+    await db.tags.update(lid, { deleted: true });
 }
 </script>
