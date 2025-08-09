@@ -7,13 +7,13 @@
             </header>
             <form @submit.prevent="addAction" class="p-5">
                 <label class="block mb-2" for="action-title">Title</label>
-                <input autofocus type="text" name="action-title" id="action-title"
+                <input v-focus type="text" name="action-title" id="action-title"
                     class="block mb-4 w-full border-1 border-gray-300 px-4 py-3" placeholder="Do the dishes"
                     autocomplete="off" required v-model.trim="newActionData.title">
                 <label for="tags-list" class="block mb-2">Tags</label>
                 <select id="tags-list" class="block mb-4 border-1 border-gray-300 px-4 py-3" multiple
                     v-model="newActionData.tags">
-                    <option v-for="tag in actionStore.tags" :key="tag.lid" :value="tag.lid">
+                    <option v-for="tag in tags" :key="tag.lid" :value="tag.lid">
                         {{ tag.name }}
                     </option>
                 </select>
@@ -42,9 +42,7 @@
                             for</label>
                         <select name="action-waiting-for" id="action-waiting-for"
                             class="block mb-4 border-1 border-gray-300 px-4 py-3" v-model="newActionData.waitingFor">
-                            <option value="">Someone</option>
-                            <option value="Nat Siriviriyakul">Nat Siriviriyakul</option>
-                            <option value="Mother">Mother</option>
+                            <option v-for="person in persons" :value="person.lid">{{ person.name }}</option>
                         </select>
                     </div>
                 </div>
@@ -104,10 +102,11 @@ import { db } from '@/db';
 import { useActionModalStore } from '@/stores/modalStore';
 import { useObservable } from '@vueuse/rxjs';
 import { liveQuery } from 'dexie';
-import { useRoute } from 'vue-router';
 import { useActionStore } from '@/stores/actionStore';
 
 const actionStore = useActionStore();
+const { tags } = actionStore;
+const persons = tags.filter(tag => tag.type === 'person'); // Assuming tags with type 'person' are used for waitingFor
 const projectsList = useObservable(
     liveQuery(() => db.projects.filter(project => !project.deleted).toArray())
 );
