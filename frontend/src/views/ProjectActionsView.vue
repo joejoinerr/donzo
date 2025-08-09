@@ -3,8 +3,9 @@
         <ItemCheckbox :due-date="project ? project.due : null" :completed="project ? project.completed : null"
             @check="toggleCompleteProject()" />
         <button class="cursor-pointer" @click="modalStore.openEdit(project)">
-            <h1 class="inline-block text-lg font-bold text-gray-600 hover:underline">{{ project?.title || 'Loading...'
-            }}</h1>
+            <h1 class="inline-block leading-none text-lg font-bold text-gray-600 hover:underline">{{ project?.title ||
+                'Loading...'
+                }}</h1>
         </button>
     </div>
     <div v-if="nextActionsList.length > 0" class="not-last:mb-8">
