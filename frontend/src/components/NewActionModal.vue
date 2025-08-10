@@ -19,6 +19,14 @@
                 </select>
                 <div class="flex gap-8">
                     <div>
+                        <label for="action-project" class="block mb-2">Project</label>
+                        <select name="action-project" id="action-project"
+                            class="block mb-4 border-1 border-gray-300 px-4 py-3" v-model="newActionData.projectLid">
+                            <option value="">Standalone (no project)</option>
+                            <option v-for="project in projectsList" :value="project.lid">{{ project.title }}</option>
+                        </select>
+                    </div>
+                    <div>
                         <label for="action-state" class="block mb-2">State</label>
                         <select name="action-state" id="action-state"
                             class="block mb-4 border-1 border-gray-300 px-4 py-3" v-model="newActionData.state">
@@ -27,14 +35,6 @@
                             <option value="waiting">Waiting</option>
                             <option value="someday">Someday</option>
                             <option value="scheduled">Scheduled</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="action-project" class="block mb-2">Project</label>
-                        <select name="action-project" id="action-project"
-                            class="block mb-4 border-1 border-gray-300 px-4 py-3" v-model="newActionData.projectLid">
-                            <option value="">Standalone (no project)</option>
-                            <option v-for="project in projectsList" :value="project.lid">{{ project.title }}</option>
                         </select>
                     </div>
                     <div v-if="newActionData.state === 'waiting'">
