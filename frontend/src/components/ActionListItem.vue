@@ -78,7 +78,7 @@ const tagNames = computed(() => {
 });
 const waitingForName = computed(() => {
     if (!props.action.waitingFor) return '';
-    const person = tags.value.find(tag => tag.lid === props.action.waitingFor);
+    const person = tags.value?.find(tag => tag.lid === props.action.waitingFor);
     return person ? person.name : 'Someone';
 });
 
